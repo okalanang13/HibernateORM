@@ -5,10 +5,23 @@
  */
 package idaos;
 
+import java.util.List;
+import models.Department;
+
 /**
  *
  * @author Okala
  */
 public interface IDepartmentDAO {
-    
+    public List<Department> getAll();
+
+    public Department getById(int id);
+
+    public List<Department> search(Object keyword);
+
+    public boolean insert(Department d);
+
+    public boolean update(Department d);
+
+    public boolean delete(int id);
 }

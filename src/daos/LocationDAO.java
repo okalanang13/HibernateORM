@@ -95,13 +95,13 @@ public class LocationDAO implements ILocationDAO {
     }
 
     @Override
-    public boolean insert(Location r) {
+    public boolean insert(Location l) {
         boolean result = false;
         try {
             session = sessionFactory.openSession();
             transaction = session.beginTransaction();
 
-            session.save(r);
+            session.save(l);
             transaction.commit();
             result = true;
         } catch (Exception ex) {
@@ -116,13 +116,13 @@ public class LocationDAO implements ILocationDAO {
     }
 
     @Override
-    public boolean update(Location r) {
+    public boolean update(Location l) {
         boolean result = false;
         try {
             session = sessionFactory.openSession();
             transaction = session.beginTransaction();
 
-            session.update(r);
+            session.update(l);
             transaction.commit();
             result = true;
         } catch (Exception ex) {

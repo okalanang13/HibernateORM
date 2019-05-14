@@ -20,9 +20,9 @@ public interface ILocationDAO {
 
     public List<Location> search(Object keyword);
 
-    public boolean insert(Location r);
+    public boolean insert(Location l);
 
-    public boolean update(Location r);
+    public boolean update(Location l);
 
     public boolean delete(int id);
 
