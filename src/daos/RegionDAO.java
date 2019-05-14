@@ -6,9 +6,11 @@
 package daos;
 
 import idaos.IRegionDAO;
-import java.sql.Connection;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 import models.Region;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -19,38 +21,139 @@ import org.hibernate.Transaction;
  */
 public class RegionDAO implements IRegionDAO{
 
-    private Connection connection;
     private SessionFactory sessionFactory = null;
     private Session session = null;
     private Transaction transaction = null;
-    
-//    public RegionDAO() {
-//        this.sessionFactory = connection;
-//    }
 
-    @Override
+    public RegionDAO(SessionFactory factory) {
+        this.sessionFactory = factory;
+    }
+
+        @Override
     public List<Region> getAll() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        List<Region> regions = new ArrayList<>();
+        try {
+            session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
+            regions = session.createQuery("FROM Region").list();
+            transaction.commit();
+        } catch (Exception ex) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            ex.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return regions;
     }
 
     @Override
-    public List<Region> getById() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Region getById(int id) {
+        Region region = new Region();
+        try {
+            session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
+            Query query = session.createQuery("FROM Region WHERE regionId=:1 ORDER BY 1");
+            query.setParameter(1, id);
+            region = (Region) query.uniqueResult();
+            transaction.commit();
+        } catch (Exception ex) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            ex.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return region;
+    }
+
+    @Override
+    public List<Region> search(Object keyword) {
+        List<Region> locations = new ArrayList<>();
+        try {
+            session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
+            String hql = "FROM " + Region.class.getSimpleName() + " WHERE ";
+            for (Field field : Region.class.getDeclaredFields()) {
+                hql += field.getName() + " LIKE '%" + keyword + "%' OR ";
+            }
+            hql = hql.substring(0, hql.lastIndexOf(" OR "));
+            hql += " ORDER BY 1";
+            locations = session.createQuery(hql).list();
+            transaction.commit();
+        } catch (Exception ex) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            ex.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return locations;
     }
 
     @Override
     public boolean insert(Region r) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        boolean result = false;
+        try {
+            session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
+
+            session.save(r);
+            transaction.commit();
+            result = true;
+        } catch (Exception ex) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            ex.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return result;
     }
 
     @Override
     public boolean update(Region r) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        boolean result = false;
+        try {
+            session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
+
+            session.update(r);
+            transaction.commit();
+            result = true;
+        } catch (Exception ex) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            ex.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return result;
     }
 
     @Override
-    public boolean delete(Region r) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public boolean delete(int id) {
+        boolean result = false;
+        try {
+            session = sessionFactory.openSession();
+            transaction = session.beginTransaction();
+
+            session.delete(id);
+            transaction.commit();
+            result = true;
+        } catch (Exception ex) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            ex.printStackTrace();
+        } finally {
+            session.close();
+        }
+        return result;
     }
-    
 }

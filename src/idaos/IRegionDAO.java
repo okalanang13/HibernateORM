@@ -16,12 +16,14 @@ public interface IRegionDAO {
 
     public List<Region> getAll();
 
-    public List<Region> getById();
+    public Region getById(int id);
+    
+    public List<Region> search(Object keyword);
 
     public boolean insert(Region r);
 
     public boolean update(Region r);
 
-    public boolean delete(Region r);
+    public boolean delete(int id);
     
 }

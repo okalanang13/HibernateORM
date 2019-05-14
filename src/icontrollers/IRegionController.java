@@ -5,10 +5,24 @@
  */
 package icontrollers;
 
+import java.util.List;
+import models.Region;
+
 /**
  *
  * @author Okala
  */
 public interface IRegionController {
+    public List<Region> getAll();
+
+    public Region getById(String id);
+    
+    public List<Region> search(String keyword);
+
+    public String insert(String regionId, String regionName);
+
+    public String update(String regionId, String regionName);
+
+    public String delete(String id);
     
 }
